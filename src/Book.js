@@ -5,6 +5,8 @@ import  noCover from './icons/no-image.png'
 
 class Book extends React.Component {
 
+    onBookUpdate = (book, event) => ( this.props.updateBook(book, event.target.value) )
+
     render() {
 
         let book = this.props.book
@@ -15,7 +17,7 @@ class Book extends React.Component {
                 <div className="book-top">
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${imageUrl})` }}></div>
                     <div className="book-shelf-changer">
-                        <select value={book.shelf}>
+                        <select value={book.shelf} onChange={(event) => this.onBookUpdate(book, event)}>
                             <option value="none" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
                             <option value="wantToRead">Want to Read</option>

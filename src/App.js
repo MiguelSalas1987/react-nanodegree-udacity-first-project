@@ -6,26 +6,70 @@ import Search from './Search'
 import Bookshelf from './Bookshelf'
 
 class BooksApp extends React.Component {
-    state = {
-        books: []
+
+    constructor(props){
+        super(props)
+        this.state = {
+            books: []
+        }
+
+    }
+
+    getAll = () => {
+        BooksAPI.getAll().then( (books) => (this.setState({ books }) ) )
     }
 
     componentDidMount() {
-        BooksAPI.getAll().then((books) => ( this.setState({books}) ) )
+        this.getAll()
     }
 
-    filterForBookshelf(shelf) {
-       return  this.state.books.filter( (book) =>(book.shelf === shelf))
+    filterForBookshelf(books, shelf) {
+       return  books.filter( (book) =>(book.shelf === shelf))
+    }
+
+    isPresentInShelves = (book) => {
+        let result = this.state.books.filter( (bookInState ) => (bookInState.id ===  book.id))
+        return result.length > 0
+    }
+
+    updateBook = (book, shelf) => {
+        BooksAPI.update(book, shelf).then( (result) => {
+
+            book.shelf = shelf
+            if( this.isPresentInShelves(book) ) {
+                this.setState({ books: this.replace(book)})
+            } else {
+                this.setState({ books: this.state.books.concat(book) })
+            }
+
+        })
+    }
+
+
+
+    replace = (book) => {
+        let books = this.state.books.map((bookInState) => {
+            if (bookInState.id === book.id) {
+                return book
+            } else {
+                return bookInState
+            }
+
+        })
+        return books
     }
 
 
     render() {
+        let books = this.state.books
         return (
             <div className="app">
                 <Route
                     path='/search'
                     render={() => (
-                        <Search/>
+                        <Search
+                            updateBook={this.updateBook}
+                        />
                     )}
                 />
                 <Route
@@ -39,15 +83,18 @@ class BooksApp extends React.Component {
                                 <div>
                                     <Bookshelf
                                         bookshelfTitle="Currently Reading"
-                                        books={this.filterForBookshelf('currentlyReading')}
+                                        books={this.filterForBookshelf(books, 'currentlyReading')}
+                                        updateBook={this.updateBook}
                                     />
                                     <Bookshelf
                                         bookshelfTitle="Want To Read"
-                                        books={this.filterForBookshelf('wantToRead')}
+                                        books={this.filterForBookshelf(books, 'wantToRead')}
+                                        updateBook={this.updateBook}
                                     />
                                     <Bookshelf
                                         bookshelfTitle="Read"
-                                        books={this.filterForBookshelf('read')}
+                                        books={this.filterForBookshelf(books, 'read')}
+                                        updateBook={this.updateBook}
                                     />
                                 </div>
                             </div>
