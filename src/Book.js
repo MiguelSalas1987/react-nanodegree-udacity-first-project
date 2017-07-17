@@ -1,5 +1,6 @@
 import React from 'react'
 import './App.css'
+import  noCover from './icons/no-image.png'
 
 
 class Book extends React.Component {
@@ -7,11 +8,12 @@ class Book extends React.Component {
     render() {
 
         let book = this.props.book
+        let imageUrl = book.imageLinks ? book.imageLinks.thumbnail : noCover
         return (
 
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${imageUrl})` }}></div>
                     <div className="book-shelf-changer">
                         <select value={book.shelf}>
                             <option value="none" disabled>Move to...</option>
@@ -23,7 +25,7 @@ class Book extends React.Component {
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors.join(', ')}</div>
+                <div className="book-authors">{ book.authors  && ( book.authors.join(', ') ) }</div>
             </div>
 
         )
