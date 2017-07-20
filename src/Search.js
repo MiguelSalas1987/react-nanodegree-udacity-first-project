@@ -26,7 +26,8 @@ class Search extends React.Component {
 
             BooksAPI.search(this.state.query, 20).then((queryBooks) => {
                 if (Array.isArray(queryBooks)) {
-                    this.setState({queryBooks})
+                    this.checkForBooksInShelves(queryBooks)
+
                 }
             })
 
@@ -34,9 +35,29 @@ class Search extends React.Component {
 
     }
 
+    checkForBooksInShelves = (actualQueryBooks) => {
+
+        let booksInShelves    = this.props.booksInShelves
+
+        let queryBooks = actualQueryBooks.map( (book)  => {
+            booksInShelves.forEach( (bookInShelves)  => {
+                if(book.id === bookInShelves.id ){
+
+                    book = bookInShelves
+
+                }
+
+            })
+
+            return book
+        })
+
+        this.setState({queryBooks})
+    }
+
 
     render() {
-
+        let updateBook = this.props.updateBook
         return (
 
             <div className="search-books">
@@ -58,6 +79,7 @@ class Search extends React.Component {
                             <li key={book.id}>
                                 <Book
                                     book={book}
+                                    updateBook={updateBook}
                                 />
                             </li>)
 
