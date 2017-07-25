@@ -52,7 +52,9 @@ class Search extends React.Component {
             return book
         })
 
-        this.setState({queryBooks})
+        if( JSON.stringify(this.state.queryBooks) === JSON.stringify(this.state.queryBooks) ) {
+            this.setState({queryBooks})
+        }
     }
 
 
